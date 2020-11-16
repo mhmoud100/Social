@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <item
+            android:id="@+id/home"
+            android:title="@string/home"
+            android:enabled="true"
+            android:icon="@drawable/ic_home"/>
+        <item
+            android:id="@+id/discover"
+            android:title="@string/discover"
+            android:enabled="true"
+            android:icon="@drawable/ic_group"/>
+        <item
+            android:id="@+id/create_post"
+            android:title="@string/post"
+            android:enabled="true"
+            android:icon="@drawable/ic_add_box"/>
+        <item
+            android:id="@+id/profile"
+            android:title="@string/profile"
+            android:enabled="true"
+            android:icon="@drawable/ic_person"/>
+</menu>

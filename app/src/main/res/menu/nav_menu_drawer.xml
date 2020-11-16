@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:title="@string/home"
+            android:icon="@drawable/ic_home"/>
+        <item
+            android:id="@+id/discover"
+            android:title="@string/discover"
+            android:icon="@drawable/ic_group"/>
+        <item
+            android:id="@+id/create_post"
+            android:title="@string/create_post"
+            android:icon="@drawable/ic_add_box"/>
+        <item
+            android:id="@+id/followers"
+            android:title="@string/followers"
+            android:icon="@drawable/ic_group"/>
+        <item
+            android:id="@+id/following"
+            android:title="@string/following"
+            android:icon="@drawable/ic_group"/>
+        <item
+            android:id="@+id/profile"
+            android:title="@string/profile"
+            android:icon="@drawable/ic_person"/>
+        <item
+            android:id="@+id/edit_profile"
+            android:title="@string/edit_profile"
+            android:icon="@drawable/ic_person"/>
+        <item
+            android:id="@+id/saved_posts"
+            android:title="@string/saved_posts"
+            android:icon="@drawable/ic_save"/>
+    </group>
+</menu>

@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Social 18</string>
+
+    <string name="social_intro">Welcome to Social!\n\nCreate your own profile to send messages and
+        keep in touch with other friends.\nClick CREATE NEW ACCOUNT to create a new profile.
+        \n\nEnjoy!</string>
+    <string name="enter_your_email">Enter your Email</string>
+    <string name="enter_your_password">Enter your Password</string>
+    <string name="login">Login</string>
+    <string name="create_new_account">Create new Account</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="ok">OK</string>
+
+    <string name="enter_correct_data">Email or Password is Empty, Please enter correct data.</string>
+
+    <string name="email_badly_formatted">The Email address is badly formatted.</string>
+
+    <string name="send_email">Send Email</string>
+    <string name="reset_your_password">Reset your Password</string>
+    <string name="enter_correct_email">Enter correct Email.</string>
+    <string name="reset_password_email_sent">Check your email inbox to be able to reset your password.</string>
+    <string name="error_occurred">An error occurred, please try again later.</string>
+
+
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="birthday">Birthday</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+
+    <string name="navigation_drawer_open">Open Drawer</string>
+    <string name="navigation_drawer_close">Close Drawer</string>
+
+    <string name="fields_are_empty">One or more fields are Empty, Please enter correct data.</string>
+    <string name="password_must">Password must be at least 6 characters.</string>
+    <string name="verify_account_intro">Congratulations!\n\nYour account created successfully, but you have one more step to be able to use Social.\n\nPlease check your personal email inbox to verify your account and the you will be able to start using Social!</string>
+    <string name="welcome_to_social">Welcome to Social!</string>
+    <string name="logout">Logout</string>
+    <string name="check_your_email">Check your Email inbox to verify your Email and then try again.</string>
+    <string name="start_using_social">Start using Social</string>
+    <string name="home">Home</string>
+    <string name="discover">Discover</string>
+    <string name="create_post">Create Post</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="profile">Profile</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="saved_posts">Saved Posts</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="write_your_post">Write your post..</string>
+    <string name="photo_from_gallery">Photo from Gallery</string>
+    <string name="photo_by_camera">Photo by Camera</string>
+    <string name="cancel">Cancel</string>
+    <string name="share_post">Share Post</string>
+    <string name="post">Post</string>
+    <string name="follow">Follow</string>
+
+</resources>
