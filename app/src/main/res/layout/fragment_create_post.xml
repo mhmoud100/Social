@@ -8,32 +8,32 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     tools:context=".fragments.CreatePostFragment">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
-    android:orientation="vertical"
-    android:background="@color/offWhite">
-    <EditText
-        android:id="@+id/add_post"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:hint="@string/write_your_post"
-        android:textColor="@color/black"
+        android:orientation="vertical"
+        android:background="@color/offWhite">
+        <EditText
+            android:id="@+id/add_post"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:hint="@string/write_your_post"
+            android:textColor="@color/black"
 
-        android:inputType="textCapSentences|textMultiLine"
-        android:gravity="top"
-        android:backgroundTint="@color/black"
-        android:paddingTop="25dp"
-        android:paddingStart="8dp"
-        android:layout_marginBottom="2dp"/>
-    <ImageView
-        android:id="@+id/post_image"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:visibility="gone"/>
-</LinearLayout>
+            android:inputType="textCapSentences|textMultiLine"
+            android:gravity="top"
+            android:backgroundTint="@color/black"
+            android:paddingTop="25dp"
+            android:paddingStart="8dp"
+            android:layout_marginBottom="2dp"/>
+        <ImageView
+            android:id="@+id/post_image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:visibility="gone"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -22,7 +22,7 @@
             android:parentActivityName=".activities.LoginActivity"/>
         <activity android:name=".activities.VerifyActivity"
             android:label="Verify your Account"/>
-        <activity android:name=".activities.HomeActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.HomeActivity" android:theme="@style/AppTheme.NoActionBar" android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".activities.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar"/>

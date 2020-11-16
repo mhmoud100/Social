@@ -47,7 +47,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     FirebaseFirestore db;
     FirebaseStorage storage;
     StorageReference reference;
-
+    Boolean b = true;
 
     public RecyclerViewAdapter(Context context, ArrayList<Post> postitem) {
         this.context = context;
@@ -86,8 +86,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if(item.getUserId().equals(user.getUid())){
             holder.follow.setVisibility(View.GONE);
         }
-
-
         reference.child(COLLECTION_USERS)
                 .child(item.getUserId())
                 .child(USER_PROFILE_PICTURE).getDownloadUrl()
@@ -99,6 +97,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                holder.profileImage.setImageResource(R.drawable.ic_account_circle);
                 Log.i("tag", e.getMessage());
             }
         });
@@ -118,29 +117,44 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-
-                    try {
-                        sleep(1000);
-                        reference.child(COLLECTION_POSTS)
-                                .child(item.getUserId())
-                                .child(DiscoverFragment.id.get(position))
-                                .child(POST_PICTURE).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                holder.progressBar.setVisibility(View.GONE);
-                                Picasso.with(context).load(uri).fit().centerCrop().into(holder.postImage);
+                    if(holder.postImage.getDrawable() == null) {
+                        //imageview has image
+                        if (b) {
+                            try {
+                                sleep(5000);
+                                notifyDataSetChanged();
+                                b = false;
+                            } catch (InterruptedException interruptedException) {
+                                interruptedException.printStackTrace();
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                holder.postImage.setVisibility(View.GONE);
-                                holder.progressBar.setVisibility(View.GONE);
-                            }
-                        });
 
-                    } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
+                        } else {
+                            holder.progressBar.setVisibility(View.GONE);
+                            holder.postImage.setVisibility(View.GONE);
+                        }
                     }
+//                    try {
+//                        sleep(1000);
+//                        reference.child(COLLECTION_POSTS)
+//                                .child(item.getUserId())
+//                                .child(DiscoverFragment.id.get(position))
+//                                .child(POST_PICTURE).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                            @Override
+//                            public void onSuccess(Uri uri) {
+//                                holder.progressBar.setVisibility(View.GONE);
+//                                Picasso.with(context).load(uri).fit().centerCrop().into(holder.postImage);
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                holder.postImage.setVisibility(View.GONE);
+//                                holder.progressBar.setVisibility(View.GONE);
+//                            }
+//                        });
+//
+//                    } catch (InterruptedException interruptedException) {
+//                        interruptedException.printStackTrace();
+//                    }
                 }
             });
 
