@@ -106,7 +106,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             reference.child(COLLECTION_POSTS)
                     .child(item.getUserId())
-                    .child(DiscoverFragment.id.get(position))
+                    .child(PostsFragment.id.get(position))
                     .child(POST_PICTURE).getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override

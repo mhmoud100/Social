@@ -15,7 +15,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.ms.social.FollowAdapter;
+import com.ms.social.UserAdapter;
 import com.ms.social.R;
 import com.ms.social.model.User;
 
@@ -44,7 +44,7 @@ public class FollowersFragment extends Fragment {
                         item = new ArrayList<>();
                         User Follow = documentSnapshot.toObject(User.class);
                         item = Follow.getFollowers();
-                        FollowAdapter adapter = new FollowAdapter(getContext(), item);
+                        UserAdapter adapter = new UserAdapter(getContext(), item);
                         listView.setAdapter(adapter);
 
                     }

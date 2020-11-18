@@ -19,13 +19,11 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ms.social.model.User;
@@ -36,7 +34,7 @@ import java.util.List;
 import static com.ms.social.help.Helper.COLLECTION_USERS;
 import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
 
-public class FollowAdapter extends BaseAdapter {
+public class UserAdapter extends BaseAdapter {
     Context context;
     List<String> item;
     FirebaseFirestore db;
@@ -44,7 +42,7 @@ public class FollowAdapter extends BaseAdapter {
     StorageReference ref;
     FirebaseAuth fauth;
 
-    public FollowAdapter(Context context, List<String> item) {
+    public UserAdapter(Context context, List<String> item) {
         this.context = context;
         this.item = item;
     }
@@ -67,7 +65,7 @@ public class FollowAdapter extends BaseAdapter {
     @SuppressLint({"ViewHolder", "InflateParams"})
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = LayoutInflater.from(context).inflate(R.layout.follow_layout, null, false);
+        convertView = LayoutInflater.from(context).inflate(R.layout.user_layout, null, false);
         ImageView photo = convertView.findViewById(R.id.follow_Image);
         TextView name = convertView.findViewById(R.id.follow_user_name);
         TextView bio = convertView.findViewById(R.id.follow_bio);
@@ -77,6 +75,9 @@ public class FollowAdapter extends BaseAdapter {
         storage = FirebaseStorage.getInstance();
         ref = storage.getReference();
         fauth = FirebaseAuth.getInstance();
+        if (fauth.getCurrentUser().getUid().equals(uid)){
+            follow.setVisibility(View.GONE);
+        }
         db.collection(COLLECTION_USERS).document(uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
