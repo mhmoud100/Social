@@ -62,10 +62,11 @@ public class PostsFragment extends Fragment {
                             Post post = doc.toObject(Post.class);
                             id.add(0, doc.getId());
                             posts.add(0, post);
-                            adapter = new PostAdapter(getContext(), posts);
-                            recyclerView.setItemViewCacheSize(posts.size());
-                            recyclerView.setAdapter(adapter);
+
                         }
+                        adapter = new PostAdapter(getContext(), posts);
+                        recyclerView.setItemViewCacheSize(posts.size());
+                        recyclerView.setAdapter(adapter);
 
                     }
                 });
