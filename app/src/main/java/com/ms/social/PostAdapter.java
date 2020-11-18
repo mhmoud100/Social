@@ -40,7 +40,7 @@ import static com.ms.social.help.Helper.POST_PICTURE;
 import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
 import static java.lang.Thread.sleep;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private ArrayList<Post> postitem;
     private Context context;
     FirebaseUser user;
@@ -49,7 +49,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     StorageReference reference;
     Boolean b = true;
 
-    public RecyclerViewAdapter(Context context, ArrayList<Post> postitem) {
+    public PostAdapter(Context context, ArrayList<Post> postitem) {
         this.context = context;
         this.postitem = postitem;
     }

@@ -3,7 +3,6 @@ package com.ms.social.fragments;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -15,26 +14,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ms.social.R;
-import com.ms.social.RecyclerViewAdapter;
+import com.ms.social.PostAdapter;
 import com.ms.social.model.Post;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.ms.social.help.Helper.COLLECTION_POSTS;
 
 public class DiscoverFragment extends Fragment {
     RecyclerView recyclerView;
-    RecyclerViewAdapter adapter;
+    PostAdapter adapter;
     ArrayList<Post> posts;
     FirebaseFirestore db;
     public static ArrayList<String> id;
@@ -71,7 +66,7 @@ public class DiscoverFragment extends Fragment {
                                 Post post = doc.toObject(Post.class);
                                 id.add(0, doc.getId());
                                 posts.add(0, post);
-                                adapter = new RecyclerViewAdapter(getContext(), posts);
+                                adapter = new PostAdapter(getContext(), posts);
                                 recyclerView.setItemViewCacheSize(posts.size());
                                 recyclerView.setAdapter(adapter);
                             }
