@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -170,12 +171,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     List<String> list = Follow.getFollowing();
                     System.out.println(list);
                     if (list.isEmpty()){
-                        holder.follow.setText("follow");
+                        holder.follow.setText("Follow");
                     } else {
                         System.out.println(list.get(0));
                         for (int i = 0; i < list.size(); i++){
                             if (list.get(i).equals(item.getUserId())){
-                                holder.follow.setText("following");
+                                holder.follow.setText("Following");
+                                holder.follow.setTextColor(ContextCompat.getColor(context, R.color.black));
+                                holder.follow.setBackgroundResource(R.drawable.off_white_selector);
                             }
                         }
                     }

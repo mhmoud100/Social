@@ -43,7 +43,6 @@
             android:layout_height="wrap_content"
             android:background="@drawable/off_white_selector"
             android:padding="8dp"
-            android:text="@string/following"
             android:textColor="@color/black"
             android:autoSizeTextType="uniform"
             android:textStyle="bold"

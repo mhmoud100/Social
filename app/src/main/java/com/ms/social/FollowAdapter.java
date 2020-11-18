@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -94,14 +95,17 @@ public class FollowAdapter extends BaseAdapter {
                 User Follow = documentSnapshot.toObject(User.class);
                 List<String> list = Follow.getFollowing();
 //                System.out.println(list);
-                follow.setText("follow");
-                System.out.println(list.contains(item.get(position)));
+                follow.setText("Follow");
+                follow.setTextColor(ContextCompat.getColor(context, R.color.white));
+                follow.setBackgroundResource(R.drawable.green_selector);
                 if (list.isEmpty()){
-                    follow.setText("follow");
+                    follow.setText("Follow");
                 } else {
 //                    System.out.println(list.get(0));
                         if (list.contains(item.get(position))){
-                            follow.setText("following");
+                            follow.setText("Following");
+                            follow.setTextColor(ContextCompat.getColor(context, R.color.black));
+                            follow.setBackgroundResource(R.drawable.off_white_selector);
                         }
 
                 }
