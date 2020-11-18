@@ -33,7 +33,6 @@ import com.google.firebase.storage.FirebaseStorage;
 //import com.social18.R;
 import com.google.firebase.storage.UploadTask;
 import com.ms.social.R;
-import com.ms.social.model.Follow;
 import com.ms.social.model.User;
 
 import java.io.ByteArrayOutputStream;
