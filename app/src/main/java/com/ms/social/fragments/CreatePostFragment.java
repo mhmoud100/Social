@@ -55,11 +55,11 @@ public class CreatePostFragment extends Fragment {
     FirebaseStorage storage;
     StorageReference storageRef;
     String ImageId = "";
-    Object Post_Image = null;
     Uri profilePicUri = null;
     private static final int CHOOSE_IMAGE_INTENT_REQUEST_CODE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     ClickAddPostInterface clickAddPostInterface;
+    Bitmap imageBitmap;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -162,6 +162,52 @@ public class CreatePostFragment extends Fragment {
 
                         }
                     });
+                } else if (imageBitmap != null){
+                    db.collection(COLLECTION_POSTS).add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            ImageId = documentReference.getId();
+
+                            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                            progressDialog.setTitle("Uploading...");
+                            progressDialog.show();
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 30, byteArrayOutputStream);
+                            byte[] bytes = byteArrayOutputStream.toByteArray();
+                            storageRef.child(COLLECTION_POSTS)
+                                    .child(fauth.getCurrentUser().getUid())
+                                    .child(ImageId)
+                                    .child(POST_PICTURE).putBytes(bytes)
+                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            progressDialog.dismiss();
+                                            clickAddPostInterface.onClickAddPost();
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                    double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                            .getTotalByteCount());
+                                    progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                                }
+                            });
+
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
                 } else {
                         db.collection(COLLECTION_POSTS).add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
@@ -180,6 +226,7 @@ public class CreatePostFragment extends Fragment {
         });
 
 
+
         return view;
     }
 
@@ -190,14 +237,16 @@ public class CreatePostFragment extends Fragment {
         if (requestCode == CHOOSE_IMAGE_INTENT_REQUEST_CODE && resultCode == RESULT_OK && intent != null){
 
             profilePicUri = intent.getData();
-            Log.i("tag", profilePicUri.toString());
             PostImage.setVisibility(View.VISIBLE);
             PostImage.setImageURI(profilePicUri);
+            System.out.println(profilePicUri);
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && intent != null) {
             Bundle extras = intent.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageBitmap = (Bitmap) extras.get("data");
+            PostImage.setVisibility(View.VISIBLE);
             PostImage.setImageBitmap(imageBitmap);
+            System.out.println(imageBitmap);
         }
 
     }

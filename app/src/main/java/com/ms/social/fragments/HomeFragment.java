@@ -1,11 +1,8 @@
 package com.ms.social.fragments;
 
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,26 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.ms.social.PostAdapter;
-import com.ms.social.PostHomeAdapter;
 import com.ms.social.R;
 import com.ms.social.model.Post;
 import com.ms.social.model.User;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +33,13 @@ import static com.ms.social.help.Helper.COLLECTION_USERS;
 
 public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
-    PostHomeAdapter adapter;
+    PostAdapter adapter;
     ArrayList<Post> posts;
     FirebaseFirestore db;
     FirebaseAuth fauth;
     List<String> followinglist;
     public static ArrayList<String> id;
+    public static Boolean isHome = true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,18 +87,16 @@ public class HomeFragment extends Fragment {
                                 Post post = doc.toObject(Post.class);
                                 id.add(0, doc.getId());
                                 posts.add(0, post);
-                                adapter = new PostHomeAdapter(getContext(), posts);
-                                recyclerView.setItemViewCacheSize(posts.size());
-                                recyclerView.setAdapter(adapter);
                             }else if(doc.get("userId").equals(fauth.getCurrentUser().getUid())){
                                 Post post = doc.toObject(Post.class);
                                 id.add(0, doc.getId());
                                 posts.add(0, post);
-                                adapter = new PostHomeAdapter(getContext(), posts);
-                                recyclerView.setItemViewCacheSize(posts.size());
-                                recyclerView.setAdapter(adapter);
+
                             }
                         }
+                        adapter = new PostAdapter(getContext(), posts);
+                        recyclerView.setItemViewCacheSize(posts.size());
+                        recyclerView.setAdapter(adapter);
 
                     }
                 });

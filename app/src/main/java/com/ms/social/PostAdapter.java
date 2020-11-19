@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ms.social.fragments.DiscoverFragment;
+import com.ms.social.fragments.HomeFragment;
 import com.ms.social.model.Post;
 import com.ms.social.model.User;
 import com.squareup.picasso.Picasso;
@@ -74,7 +75,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         return postitem.size();
     }
 
-    public void onBindViewHolder (ViewHolder holder, final int position){
+    public void onBindViewHolder (ViewHolder holder, final int position) {
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         storage = FirebaseStorage.getInstance();
@@ -84,80 +85,91 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.postText.setText(item.getText());
         holder.date.setText(item.getDate());
         holder.userName.setText(item.getUserName());
-        if(item.getUserId().equals(user.getUid())){
+        if (item.getUserId().equals(user.getUid())) {
             holder.follow.setVisibility(View.GONE);
         }
         reference.child(COLLECTION_USERS)
                 .child(item.getUserId())
                 .child(USER_PROFILE_PICTURE).getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.with(context).load(uri).fit().centerInside().into(holder.profileImage);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.with(context).load(uri).fit().centerInside().into(holder.profileImage);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 holder.profileImage.setImageResource(R.drawable.ic_account_circle);
                 Log.i("tag", e.getMessage());
             }
         });
-
-
-            reference.child(COLLECTION_POSTS)
-                    .child(item.getUserId())
-                    .child(PostsFragment.id.get(position))
-                    .child(POST_PICTURE).getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            holder.progressBar.setVisibility(View.GONE);
-                            Picasso.with(context).load(uri).fit().centerCrop().into(holder.postImage);
-//                            notifyDataSetChanged();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    if(holder.postImage.getDrawable() == null) {
-                        //imageview has image
-                        if (b) {
-                            try {
-                                sleep(5000);
-                                notifyDataSetChanged();
-                                b = false;
-                            } catch (InterruptedException interruptedException) {
-                                interruptedException.printStackTrace();
+            if (HomeFragment.isHome){
+                reference.child(COLLECTION_POSTS)
+                        .child(item.getUserId())
+                        .child(HomeFragment.id.get(position))
+                        .child(POST_PICTURE).getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                holder.progressBar.setVisibility(View.GONE);
+                                Picasso.with(context).load(uri).fit().centerInside().into(holder.postImage);
                             }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if(holder.postImage.getDrawable() == null) {
+                            if (b) {
+                                try {
+                                    sleep(5000);
+                                    notifyDataSetChanged();
+                                    b = false;
+                                } catch (InterruptedException interruptedException) {
+                                    interruptedException.printStackTrace();
+                                }
 
-                        } else {
-                            holder.progressBar.setVisibility(View.GONE);
-                            holder.postImage.setVisibility(View.GONE);
+                            } else {
+                                holder.progressBar.setVisibility(View.GONE);
+                                holder.postImage.setVisibility(View.GONE);
+                            }
                         }
                     }
-//                    try {
-//                        sleep(1000);
-//                        reference.child(COLLECTION_POSTS)
-//                                .child(item.getUserId())
-//                                .child(DiscoverFragment.id.get(position))
-//                                .child(POST_PICTURE).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                            @Override
-//                            public void onSuccess(Uri uri) {
-//                                holder.progressBar.setVisibility(View.GONE);
-//                                Picasso.with(context).load(uri).fit().centerCrop().into(holder.postImage);
-//                            }
-//                        }).addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                holder.postImage.setVisibility(View.GONE);
-//                                holder.progressBar.setVisibility(View.GONE);
-//                            }
-//                        });
-//
-//                    } catch (InterruptedException interruptedException) {
-//                        interruptedException.printStackTrace();
-//                    }
-                }
-            });
+                });
+
+    }else{
+
+                reference.child(COLLECTION_POSTS)
+                        .child(item.getUserId())
+                        .child(PostsFragment.id.get(position))
+                        .child(POST_PICTURE).getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                holder.progressBar.setVisibility(View.GONE);
+                                Picasso.with(context).load(uri).fit().centerInside().into(holder.postImage);
+//                            notifyDataSetChanged();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if (holder.postImage.getDrawable() == null) {
+                            if (b) {
+                                try {
+                                    sleep(5000);
+                                    notifyDataSetChanged();
+                                    b = false;
+                                } catch (InterruptedException interruptedException) {
+                                    interruptedException.printStackTrace();
+                                }
+
+                            } else {
+                                holder.progressBar.setVisibility(View.GONE);
+                                holder.postImage.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                });
+
+        }
 
             db.collection(COLLECTION_USERS).document(user.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override

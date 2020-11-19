@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.ms.social.fragments.HomeFragment;
 import com.ms.social.model.Post;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class PostsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_posts, container, false);
+        HomeFragment.isHome = false;
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         db = FirebaseFirestore.getInstance();
@@ -58,11 +60,9 @@ public class PostsFragment extends Fragment {
                             return;
                         }
                         for (QueryDocumentSnapshot doc : value) {
-
                             Post post = doc.toObject(Post.class);
                             id.add(0, doc.getId());
                             posts.add(0, post);
-
                         }
                         adapter = new PostAdapter(getContext(), posts);
                         recyclerView.setItemViewCacheSize(posts.size());
