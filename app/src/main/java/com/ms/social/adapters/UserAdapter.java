@@ -1,4 +1,4 @@
-package com.ms.social;
+package com.ms.social.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ms.social.R;
 import com.ms.social.model.User;
 import com.squareup.picasso.Picasso;
 

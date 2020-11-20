@@ -1,4 +1,4 @@
-package com.ms.social;
+package com.ms.social.adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -26,9 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.ms.social.fragments.DiscoverFragment;
-import com.ms.social.fragments.HomeFragment;
-import com.ms.social.fragments.ProfileFragment;
+import com.ms.social.R;
 import com.ms.social.help.Helper;
 import com.ms.social.model.Post;
 import com.ms.social.model.User;

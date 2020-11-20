@@ -1,4 +1,4 @@
-package com.ms.social;
+package com.ms.social.fragments;
 
 import android.os.Bundle;
 
@@ -18,9 +18,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.ms.social.fragments.HomeFragment;
-import com.ms.social.fragments.ProfileFragment;
-import com.ms.social.help.Helper;
+import com.ms.social.adapters.PostAdapter;
+import com.ms.social.R;
 import com.ms.social.model.Post;
 
 import java.util.ArrayList;

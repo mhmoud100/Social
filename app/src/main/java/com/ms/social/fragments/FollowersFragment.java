@@ -15,7 +15,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.ms.social.UserAdapter;
+import com.ms.social.adapters.UserAdapter;
 import com.ms.social.R;
 import com.ms.social.model.User;
 
