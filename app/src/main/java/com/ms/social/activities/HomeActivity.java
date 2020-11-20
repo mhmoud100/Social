@@ -202,7 +202,7 @@ public class HomeActivity extends AppCompatActivity implements ClickAddPostInter
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logout :
-                FirebaseAuth.getInstance().signOut();
+                fauth.signOut();
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 HomeActivity.this.finishAffinity();
         }

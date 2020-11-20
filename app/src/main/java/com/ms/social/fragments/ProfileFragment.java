@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -90,7 +91,9 @@ PostAdapter adapter;
                     User user = document.toObject(User.class);
                     profileName.setText(user.getUsername());
                     profileBio.setText(user.getBio());
+                    followersNumber.setTextColor(ContextCompat.getColor(getContext(),R.color.green));
                     followersNumber.setText(String.valueOf(user.getFollowers().size()));
+                    followingNumber.setTextColor(ContextCompat.getColor(getContext(),R.color.green));
                     followingNumber.setText(String.valueOf(user.getFollowing().size()));
 
 

@@ -8,8 +8,11 @@
     android:background="@color/offWhite"
     tools:context=".activities.CommentActivity">
     <ListView
+        android:id="@+id/comments"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:divider="@color/offWhite"
+        android:dividerHeight="10dp"
         app:layout_constraintBottom_toTopOf="@+id/linear"
         app:layout_constraintTop_toTopOf="parent"/>
     <LinearLayout
@@ -20,14 +23,18 @@
         android:gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent">
 <EditText
+    android:id="@+id/comment_text"
     android:layout_width="0dp"
     android:layout_weight="1"
+    android:padding="8dp"
+    android:hint="@string/write_your_comment_here"
     android:layout_height="match_parent"
     android:background="@color/white"/>
     <Button
+        android:id="@+id/comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Comment"
+        android:text="@string/comment"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:background="@drawable/green_selector" />

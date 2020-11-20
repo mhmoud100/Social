@@ -23,6 +23,7 @@ import com.ms.social.R;
 import com.ms.social.model.Post;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.ms.social.help.Helper.COLLECTION_POSTS;
 import static com.ms.social.help.Helper.id;
@@ -53,6 +54,7 @@ public class PostsFragment extends Fragment {
     }
     private void display(){
 
+
         db.collection(COLLECTION_POSTS).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -61,14 +63,15 @@ public class PostsFragment extends Fragment {
                 if (error != null){
                     Log.i("tag", "Fail", error);
                 }
+                if (value != null) {
+                    for (QueryDocumentSnapshot documentSnapshot : value){
+                        Post post = documentSnapshot.toObject(Post.class);
 
-                for (QueryDocumentSnapshot documentSnapshot : value){
-                    Post post = documentSnapshot.toObject(Post.class);
+                            id.add(0,documentSnapshot.getId());
 
-                        id.add(0,documentSnapshot.getId());
+                            posts.add(0,post);
 
-                        posts.add(0,post);
-
+                    }
                 }
                 adapter = new PostAdapter(getContext(), posts);
                 recyclerView.setItemViewCacheSize(2);

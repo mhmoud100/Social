@@ -9,39 +9,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:id="@+id/block1">
+
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_image_profile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="2"
-            android:layout_marginLeft="10dp">
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/user_image_profile"
+            android:id="@+id/block1">
             <TextView
                 android:id="@+id/user_name_profile"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
+                android:layout_marginBottom="8dp"
                 android:textSize="30sp"
                 android:textColor="@color/black" />
             <TextView
                 android:id="@+id/user_bio_profile"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:autoSizeTextType="uniform"
                 android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="20dp"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,13 +45,13 @@
                 android:textColor="@color/black"
                 android:background="@drawable/off_white_selector"/>
         </LinearLayout>
-    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/block2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/block1"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
     <LinearLayout
         android:layout_width="0dp"
@@ -68,7 +64,7 @@
            android:layout_height="wrap_content"
            android:text="@string/following"
            android:textAllCaps="false"
-           android:layout_marginEnd="2dp"
+           android:layout_marginEnd="5dp"
            android:background="@drawable/off_white_selector"/>
         <Button
             android:id="@+id/following_number"
@@ -78,7 +74,7 @@
             android:clickable="false"
             android:textColor="@color/black"
             android:textAppearance="?android:textAppearanceSmall"
-            android:background="@color/yellow" />
+            android:background="@drawable/follow_number_shape" />
     </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -91,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/followers"
                 android:textAllCaps="false"
-                android:layout_marginEnd="2dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/off_white_selector"/>
             <Button
                 android:id="@+id/followers_number"
@@ -101,7 +97,7 @@
                 android:clickable="false"
                 android:textColor="@color/black"
                 android:textAppearance="?android:textAppearanceSmall"
-                android:background="@color/yellow" />
+                android:background="@drawable/follow_number_shape" />
         </LinearLayout>
 
 

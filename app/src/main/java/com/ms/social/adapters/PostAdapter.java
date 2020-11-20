@@ -226,6 +226,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         }
                     }
                 });
+         db.collection(COLLECTION_POSTS).document(id.get(position)).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Post post = documentSnapshot.toObject(Post.class);
+                        if (post.getComments().size() != 0){
+                            if (post.getComments().get(position).getUserId().equals(user.getUid())){
+                                holder.commentImage.setImageResource(R.drawable.ic_commented);
+                                holder.commentText.setText(String.valueOf(post.getComments().size()));
+                                holder.commentText.setTextColor(ContextCompat.getColor(context, R.color.green));
+                            } else {
+                                holder.commentText.setText(String.valueOf(post.getComments().size()));
+                            }
+                        }
+                    }
+                });
             holder.favoriteImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -307,6 +323,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, CommentActivity.class);
+                intent.putExtra("position", position);
                 context.startActivity(intent);
             }
         });

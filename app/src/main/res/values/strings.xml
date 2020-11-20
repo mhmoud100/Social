@@ -56,5 +56,7 @@
     <string name="share_post">Share Post</string>
     <string name="post">Post</string>
     <string name="follow">Follow</string>
+    <string name="write_your_comment_here">Write Your Comment Here...</string>
+    <string name="comment">Comment</string>
 
 </resources>
