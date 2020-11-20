@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ms.social.adapters.PostAdapter;
 import com.ms.social.R;
+import com.ms.social.help.Helper;
 import com.ms.social.model.Post;
 import com.ms.social.model.User;
 import com.squareup.picasso.Picasso;
@@ -65,7 +67,16 @@ PostAdapter adapter;
         followersNumber = view.findViewById(R.id.followers_number);
         followingNumber = view.findViewById(R.id.following_number);
         recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+
+        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        itemDecor.setDrawable(getContext().getDrawable(R.drawable.divider_shape));
+        recyclerView.addItemDecoration(itemDecor);
         fauth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
@@ -106,20 +117,23 @@ PostAdapter adapter;
         return view;
     }
     public void display(){
-        posts = new ArrayList<>();
-        id = new ArrayList<>();
-        db.collection(COLLECTION_POSTS).whereEqualTo("userId", fauth.getCurrentUser().getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection(COLLECTION_POSTS).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-
+                posts = new ArrayList<>();
+                id = new ArrayList<>();
                 if (error != null){
                     Log.i("tag", "Fail", error);
+                    return;
                 }
 
                 for (QueryDocumentSnapshot documentSnapshot : value){
-                    id.add(0,documentSnapshot.getId());
                     Post post = documentSnapshot.toObject(Post.class);
-                    posts.add(0,post);
+                    if(post.getUserId().equals(fauth.getCurrentUser().getUid())){
+                        id.add(0,documentSnapshot.getId());
+
+                        posts.add(0,post);
+                    }
                 }
                 adapter = new PostAdapter(getContext(), posts);
                 recyclerView.setItemViewCacheSize(2);

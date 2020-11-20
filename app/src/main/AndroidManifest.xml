@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ms.social">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -12,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.CommentActivity" android:label="Comments" android:parentActivityName=".activities.HomeActivity"/>
         <activity android:name=".activities.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,15 +24,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SignUpActivity"
+        <activity
+            android:name=".activities.SignUpActivity"
             android:label="@string/create_new_account"
-            android:parentActivityName=".activities.LoginActivity"/>
-        <activity android:name=".activities.VerifyActivity"
-            android:label="Verify your Account"/>
-        <activity android:name=".activities.HomeActivity" android:theme="@style/AppTheme.NoActionBar" android:configChanges="keyboardHidden|orientation|screenSize"/>
+            android:parentActivityName=".activities.LoginActivity" />
+        <activity
+            android:name=".activities.VerifyActivity"
+            android:label="Verify your Account" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

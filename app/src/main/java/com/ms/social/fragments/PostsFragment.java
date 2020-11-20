@@ -38,7 +38,12 @@ public class PostsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_posts, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         db = FirebaseFirestore.getInstance();
         DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         itemDecor.setDrawable(getContext().getDrawable(R.drawable.divider_shape));
@@ -48,28 +53,29 @@ public class PostsFragment extends Fragment {
     }
     private void display(){
 
-        db.collection(COLLECTION_POSTS)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException e) {
-                        posts = new ArrayList<>();
-                        id = new ArrayList<>();
-                        if (e != null) {
-                            Log.i("tag", "Listen failed.", e);
-                            return;
-                        }
-                        for (QueryDocumentSnapshot doc : value) {
-                            Post post = doc.toObject(Post.class);
-                            id.add(0, doc.getId());
-                            posts.add(0, post);
-                        }
-                        adapter = new PostAdapter(getContext(), posts);
-                        recyclerView.setItemViewCacheSize(2);
-                        recyclerView.setAdapter(adapter);
+        db.collection(COLLECTION_POSTS).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                posts = new ArrayList<>();
+                id = new ArrayList<>();
+                if (error != null){
+                    Log.i("tag", "Fail", error);
+                }
 
-                    }
-                });
+                for (QueryDocumentSnapshot documentSnapshot : value){
+                    Post post = documentSnapshot.toObject(Post.class);
+
+                        id.add(0,documentSnapshot.getId());
+
+                        posts.add(0,post);
+
+                }
+                adapter = new PostAdapter(getContext(), posts);
+                recyclerView.setItemViewCacheSize(2);
+                recyclerView.setAdapter(adapter);
+
+            }
+        });
 
     }
 }

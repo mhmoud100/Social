@@ -1,6 +1,7 @@
 package com.ms.social.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,11 +28,14 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ms.social.R;
+import com.ms.social.activities.CommentActivity;
 import com.ms.social.help.Helper;
 import com.ms.social.model.Post;
 import com.ms.social.model.User;
 import com.squareup.picasso.Picasso;
 
+
+import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,7 @@ import static com.ms.social.help.Helper.COLLECTION_POSTS;
 import static com.ms.social.help.Helper.COLLECTION_USERS;
 import static com.ms.social.help.Helper.POST_PICTURE;
 import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
+import static com.ms.social.help.Helper.id;
 import static java.lang.Thread.sleep;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
@@ -88,6 +93,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         if (item.getUserId().equals(user.getUid())) {
             holder.follow.setVisibility(View.GONE);
         }
+
         reference.child(COLLECTION_USERS)
                 .child(item.getUserId())
                 .child(USER_PROFILE_PICTURE).getDownloadUrl()
@@ -106,14 +112,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
                 reference.child(COLLECTION_POSTS)
                         .child(item.getUserId())
-                        .child(Helper.id.get(position))
+                        .child(id.get(position))
                         .child(POST_PICTURE).getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
                                 holder.progressBar.setVisibility(View.GONE);
                                 Picasso.with(context).load(uri).fit().centerInside().into(holder.postImage);
-//                            notifyDataSetChanged();
+
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -196,13 +202,120 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
                 }
             });
+        db.collection(COLLECTION_POSTS).document(id.get(position)).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Post post = documentSnapshot.toObject(Post.class);
+                        if (post.getSaved_by().contains(user.getUid())){
+                            holder.save_post.setImageResource(R.drawable.ic_saved);
+                        }
+                    }
+                });
+        db.collection(COLLECTION_POSTS).document(id.get(position)).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Post post = documentSnapshot.toObject(Post.class);
+                        if (post.getLiked_by().contains(user.getUid())){
+                            holder.favoriteImage.setImageResource(R.drawable.ic_liked);
+                            holder.favoriteText.setText(String.valueOf(post.getLiked_by().size()));
+                            holder.favoriteText.setTextColor(ContextCompat.getColor(context, R.color.green));
+                        } else {
+                            holder.favoriteText.setText(String.valueOf(post.getLiked_by().size()));
+                        }
+                    }
+                });
+            holder.favoriteImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
+                    db.collection(COLLECTION_POSTS).document(id.get(position)).get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    Post post = documentSnapshot.toObject(Post.class);
+                                    if (post.getLiked_by().contains(user.getUid())){
+                                        db.collection(COLLECTION_POSTS).document(id.get(position))
+                                                .update("liked_by", FieldValue.arrayRemove(user.getUid()))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.favoriteImage.setImageResource(R.drawable.ic_favorite);
+                                                holder.favoriteText.setText(String.valueOf(post.getLiked_by().size()));
+                                                holder.favoriteText.setTextColor(ContextCompat.getColor(context, R.color.black));
+                                            }
+                                        });
+                                    } else {
+                                        db.collection(COLLECTION_POSTS).document(id.get(position))
+                                                .update("liked_by", FieldValue.arrayUnion(user.getUid()))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+
+                }
+            });
+
+            holder.save_post.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    db.collection(COLLECTION_POSTS).document(id.get(position)).get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    Post post = documentSnapshot.toObject(Post.class);
+                                    if (post.getSaved_by().contains(user.getUid())){
+                                        db.collection(COLLECTION_POSTS).document(id.get(position))
+                                                .update("saved_by", FieldValue.arrayRemove(user.getUid()))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        holder.favoriteImage.setImageResource(R.drawable.ic_bookmark);
+                                                    }
+                                                });
+                                    } else {
+                                        db.collection(COLLECTION_POSTS).document(id.get(position))
+                                                .update("saved_by", FieldValue.arrayUnion(user.getUid()))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                }
+            });
+        holder.commentImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CommentActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView profileImage, postImage;
-        TextView userName, date, postText, follow;
+        ImageView profileImage, postImage, save_post, favoriteImage, commentImage;
+        TextView userName, date, postText, follow, favoriteText, commentText;
         ProgressBar progressBar;
         ViewHolder(View view){
             super(view);
@@ -213,6 +326,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             postText = view.findViewById(R.id.post_title);
             follow = view.findViewById(R.id.follow);
             progressBar = view.findViewById(R.id.progress);
+            save_post = view.findViewById(R.id.save_post_image);
+            favoriteImage = view.findViewById(R.id.favorite_image);
+            favoriteText = view.findViewById(R.id.favorite_text);
+            commentImage = view.findViewById(R.id.comment_image);
+            commentText = view.findViewById(R.id.comment_text);
 
         }
 

@@ -41,6 +41,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -118,7 +119,7 @@ public class CreatePostFragment extends Fragment {
                 Post post = new Post(fauth.getCurrentUser().getUid(),
                         fauth.getCurrentUser().getDisplayName(),
                         AddPost.getText().toString(),
-                        currentDateAndTime);
+                        currentDateAndTime,new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
                 if (profilePicUri != null) {
                     db.collection(COLLECTION_POSTS).add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
