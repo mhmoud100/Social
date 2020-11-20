@@ -102,7 +102,7 @@ PostAdapter adapter;
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                profileImage.setImageResource(R.drawable.ic_account_circle);
             }
         });
         return view;
