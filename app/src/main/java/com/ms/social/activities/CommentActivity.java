@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,8 +60,10 @@ public class CommentActivity extends AppCompatActivity {
         comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Comment data = new Comment(auth.getCurrentUser().getUid(), commentText.getText().toString());
-                db.collection(COLLECTION_POSTS).document(id.get(position)).update("comments", FieldValue.arrayUnion(data));
+                if (!commentText.getText().toString().trim().equals("")) {
+                    Comment data = new Comment(auth.getCurrentUser().getUid(), commentText.getText().toString());
+                    db.collection(COLLECTION_POSTS).document(id.get(position)).update("comments", FieldValue.arrayUnion(data));
+                }
             }
         });
 

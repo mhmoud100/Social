@@ -154,11 +154,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     DocumentSnapshot documentSnapshot = value;
                     User Follow = documentSnapshot.toObject(User.class);
                     List<String> list = Follow.getFollowing();
-                    System.out.println(list);
                     if (list.isEmpty()){
                         holder.follow.setText("Follow");
                     } else {
-                        System.out.println(list.get(0));
                         for (int i = 0; i < list.size(); i++){
                             if (list.get(i).equals(item.getUserId())){
                                 holder.follow.setText("Following");
@@ -231,16 +229,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Post post = documentSnapshot.toObject(Post.class);
-                        if (post.getComments().size() != 0){
-                            if (post.getComments().get(position).getUserId().equals(user.getUid())){
-                                holder.commentImage.setImageResource(R.drawable.ic_commented);
-                                holder.commentText.setText(String.valueOf(post.getComments().size()));
-                                holder.commentText.setTextColor(ContextCompat.getColor(context, R.color.green));
-                            } else {
-                                holder.commentText.setText(String.valueOf(post.getComments().size()));
+                        if (post.getComments().size() != 0) {
+                            for (int i = 0; i < post.getComments().size(); i++) {
+                                if (post.getComments().get(i).getUserId().equals(user.getUid())){
+                                    holder.commentImage.setImageResource(R.drawable.ic_commented);
+                                    holder.commentText.setText(String.valueOf(post.getComments().size()));
+                                    holder.commentText.setTextColor(ContextCompat.getColor(context, R.color.green));
+                                } else {
+                                    holder.commentText.setText(String.valueOf(post.getComments().size()));
+                                }
                             }
                         }
-                    }
+
+
+                        }
+
                 });
             holder.favoriteImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -322,6 +325,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.commentImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(context, CommentActivity.class);
                 intent.putExtra("position", position);
                 context.startActivity(intent);

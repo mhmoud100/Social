@@ -19,9 +19,8 @@
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textColor="@color/black"
-            android:autoSizeTextType="uniform"
             android:textStyle="bold"/>
         <TextView
             android:id="@+id/user_comment"
@@ -29,7 +28,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:autoSizeTextType="uniform"/>
+            android:textSize="16sp" />
     </LinearLayout>
 </LinearLayout>

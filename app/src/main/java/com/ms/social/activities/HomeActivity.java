@@ -42,12 +42,15 @@ import com.ms.social.fragments.HomeFragment;
 import com.ms.social.R;
 import com.ms.social.fragments.ProfileFragment;
 import com.ms.social.fragments.SavedPostesFragment;
+import com.ms.social.interfaces.ClickGotoEditInterface;
+import com.ms.social.interfaces.ClickGotoFollowersInterface;
+import com.ms.social.interfaces.ClickGotoFollowingInterface;
 import com.squareup.picasso.Picasso;
 
 import static com.ms.social.help.Helper.COLLECTION_USERS;
 import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
 
-public class HomeActivity extends AppCompatActivity implements ClickAddPostInterface {
+public class HomeActivity extends AppCompatActivity implements ClickAddPostInterface, ClickGotoFollowingInterface, ClickGotoFollowersInterface, ClickGotoEditInterface {
     FirebaseAuth fauth;
     FirebaseFirestore db;
     FirebaseStorage storage;
@@ -216,4 +219,24 @@ public class HomeActivity extends AppCompatActivity implements ClickAddPostInter
         bottomNavigationView.getMenu().getItem(0).setChecked(true);
     }
 
+    @Override
+    public void onClickGotoEdit() {
+        setFragment(new EditProfileFragment(), "Edit Profile");
+        navigationView.getMenu().getItem(6).setChecked(true);
+        bottomNavigationView.getMenu().setGroupCheckable(0, false, true);
+    }
+
+    @Override
+    public void onClickGotoFollowers() {
+        setFragment(new FollowersFragment(), "Followers");
+        navigationView.getMenu().getItem(3).setChecked(true);
+        bottomNavigationView.getMenu().setGroupCheckable(0, false, true);
+    }
+
+    @Override
+    public void onClickGotoFollowing() {
+        setFragment(new FollowingFragment(), "Following");
+        navigationView.getMenu().getItem(4).setChecked(true);
+        bottomNavigationView.getMenu().setGroupCheckable(0, false, true);
+    }
 }

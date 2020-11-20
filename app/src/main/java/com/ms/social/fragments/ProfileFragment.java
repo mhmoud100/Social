@@ -1,5 +1,6 @@
 package com.ms.social.fragments;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,6 +36,9 @@ import com.google.firebase.storage.StorageReference;
 import com.ms.social.adapters.PostAdapter;
 import com.ms.social.R;
 import com.ms.social.help.Helper;
+import com.ms.social.interfaces.ClickGotoEditInterface;
+import com.ms.social.interfaces.ClickGotoFollowersInterface;
+import com.ms.social.interfaces.ClickGotoFollowingInterface;
 import com.ms.social.model.Post;
 import com.ms.social.model.User;
 import com.squareup.picasso.Picasso;
@@ -48,6 +53,7 @@ import static com.ms.social.help.Helper.id;
 public class ProfileFragment extends Fragment {
 ImageView profileImage;
 TextView profileName, profileBio, followersNumber, followingNumber;
+Button EditProfile, Followers, Following;
 RecyclerView recyclerView;
 FirebaseAuth fauth;
 FirebaseFirestore db;
@@ -55,7 +61,17 @@ FirebaseStorage storage;
 StorageReference ref;
 ArrayList<Post> posts;
 PostAdapter adapter;
+ClickGotoEditInterface clickGotoEditInterface;
+ClickGotoFollowersInterface clickGotoFollowersInterface;
+ClickGotoFollowingInterface clickGotoFollowingInterface;
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        clickGotoEditInterface = (ClickGotoEditInterface) context;
+        clickGotoFollowersInterface = (ClickGotoFollowersInterface) context;
+        clickGotoFollowingInterface = (ClickGotoFollowingInterface) context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,6 +84,9 @@ PostAdapter adapter;
         followersNumber = view.findViewById(R.id.followers_number);
         followingNumber = view.findViewById(R.id.following_number);
         recyclerView = view.findViewById(R.id.recyclerView);
+        EditProfile = view.findViewById(R.id.edit);
+        Followers = view.findViewById(R.id.followers);
+        Following = view.findViewById(R.id.following);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()){
             @Override
             public boolean canScrollVertically() {
@@ -83,6 +102,8 @@ PostAdapter adapter;
         storage = FirebaseStorage.getInstance();
         ref = storage.getReference();
         display();
+
+
         db.collection(COLLECTION_USERS).document(fauth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -117,6 +138,30 @@ PostAdapter adapter;
                 profileImage.setImageResource(R.drawable.ic_account_circle);
             }
         });
+
+
+        EditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickGotoEditInterface.onClickGotoEdit();
+            }
+        });
+
+        Following.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickGotoFollowingInterface.onClickGotoFollowing();
+            }
+        });
+
+        Followers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickGotoFollowersInterface.onClickGotoFollowers();
+            }
+        });
+
+
         return view;
     }
     public void display(){
@@ -139,7 +184,7 @@ PostAdapter adapter;
                     }
                 }
                 adapter = new PostAdapter(getContext(), posts);
-                recyclerView.setItemViewCacheSize(2);
+                recyclerView.setItemViewCacheSize(posts.size());
                 recyclerView.setAdapter(adapter);
 
             }

@@ -66,15 +66,13 @@ public class PostsFragment extends Fragment {
                 if (value != null) {
                     for (QueryDocumentSnapshot documentSnapshot : value){
                         Post post = documentSnapshot.toObject(Post.class);
-
                             id.add(0,documentSnapshot.getId());
-
                             posts.add(0,post);
 
                     }
                 }
                 adapter = new PostAdapter(getContext(), posts);
-                recyclerView.setItemViewCacheSize(2);
+                recyclerView.setItemViewCacheSize(posts.size());
                 recyclerView.setAdapter(adapter);
 
             }
