@@ -22,6 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ms.social.PostAdapter;
 import com.ms.social.R;
+import com.ms.social.help.Helper;
 import com.ms.social.model.Post;
 import com.ms.social.model.User;
 
@@ -30,6 +31,7 @@ import java.util.List;
 
 import static com.ms.social.help.Helper.COLLECTION_POSTS;
 import static com.ms.social.help.Helper.COLLECTION_USERS;
+import static com.ms.social.help.Helper.id;
 
 public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
@@ -38,8 +40,6 @@ public class HomeFragment extends Fragment {
     FirebaseFirestore db;
     FirebaseAuth fauth;
     List<String> followinglist;
-    public static ArrayList<String> id;
-    public static Boolean isHome = true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment {
                             }
                         }
                         adapter = new PostAdapter(getContext(), posts);
-                        recyclerView.setItemViewCacheSize(posts.size());
+                        recyclerView.setItemViewCacheSize(2);
                         recyclerView.setAdapter(adapter);
 
                     }

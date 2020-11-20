@@ -28,6 +28,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ms.social.fragments.DiscoverFragment;
 import com.ms.social.fragments.HomeFragment;
+import com.ms.social.fragments.ProfileFragment;
+import com.ms.social.help.Helper;
 import com.ms.social.model.Post;
 import com.ms.social.model.User;
 import com.squareup.picasso.Picasso;
@@ -103,43 +105,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Log.i("tag", e.getMessage());
             }
         });
-            if (HomeFragment.isHome){
-                reference.child(COLLECTION_POSTS)
-                        .child(item.getUserId())
-                        .child(HomeFragment.id.get(position))
-                        .child(POST_PICTURE).getDownloadUrl()
-                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                holder.progressBar.setVisibility(View.GONE);
-                                Picasso.with(context).load(uri).fit().centerInside().into(holder.postImage);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        if(holder.postImage.getDrawable() == null) {
-                            if (b) {
-                                try {
-                                    sleep(5000);
-                                    notifyDataSetChanged();
-                                    b = false;
-                                } catch (InterruptedException interruptedException) {
-                                    interruptedException.printStackTrace();
-                                }
-
-                            } else {
-                                holder.progressBar.setVisibility(View.GONE);
-                                holder.postImage.setVisibility(View.GONE);
-                            }
-                        }
-                    }
-                });
-
-    }else{
 
                 reference.child(COLLECTION_POSTS)
                         .child(item.getUserId())
-                        .child(PostsFragment.id.get(position))
+                        .child(Helper.id.get(position))
                         .child(POST_PICTURE).getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -169,7 +138,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     }
                 });
 
-        }
+
 
             db.collection(COLLECTION_USERS).document(user.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override

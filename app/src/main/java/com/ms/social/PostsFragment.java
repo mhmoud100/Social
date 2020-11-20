@@ -19,24 +19,25 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ms.social.fragments.HomeFragment;
+import com.ms.social.fragments.ProfileFragment;
+import com.ms.social.help.Helper;
 import com.ms.social.model.Post;
 
 import java.util.ArrayList;
 
 import static com.ms.social.help.Helper.COLLECTION_POSTS;
+import static com.ms.social.help.Helper.id;
 
 public class PostsFragment extends Fragment {
     RecyclerView recyclerView;
     PostAdapter adapter;
     ArrayList<Post> posts;
     FirebaseFirestore db;
-    public static ArrayList<String> id;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_posts, container, false);
-        HomeFragment.isHome = false;
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         db = FirebaseFirestore.getInstance();
@@ -65,7 +66,7 @@ public class PostsFragment extends Fragment {
                             posts.add(0, post);
                         }
                         adapter = new PostAdapter(getContext(), posts);
-                        recyclerView.setItemViewCacheSize(posts.size());
+                        recyclerView.setItemViewCacheSize(2);
                         recyclerView.setAdapter(adapter);
 
                     }
