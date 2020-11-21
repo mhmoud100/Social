@@ -112,9 +112,7 @@ ClickGotoFollowingInterface clickGotoFollowingInterface;
                     User user = document.toObject(User.class);
                     profileName.setText(user.getUsername());
                     profileBio.setText(user.getBio());
-                    followersNumber.setTextColor(ContextCompat.getColor(getContext(),R.color.green));
                     followersNumber.setText(String.valueOf(user.getFollowers().size()));
-                    followingNumber.setTextColor(ContextCompat.getColor(getContext(),R.color.green));
                     followingNumber.setText(String.valueOf(user.getFollowing().size()));
 
 

@@ -239,6 +239,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                     holder.commentText.setText(String.valueOf(post.getComments().size()));
                                 }
                             }
+                        } else {
+                            holder.commentText.setText(String.valueOf(post.getComments().size()));
                         }
 
 
