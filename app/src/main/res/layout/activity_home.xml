@@ -31,6 +31,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:menu="@menu/nav_menu_bottom"
+            app:itemTextColor="@drawable/bottom_navigation_selector"
+            app:itemIconTint="@drawable/bottom_navigation_selector"
             app:labelVisibilityMode="labeled"
             android:background="@color/white"/>
     </com.google.android.material.appbar.AppBarLayout>
