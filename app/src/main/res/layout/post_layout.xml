@@ -111,8 +111,7 @@
         android:id="@+id/favorite_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="0"/>
+        android:layout_marginStart="8dp" />
 </LinearLayout>
 <LinearLayout
     android:id="@+id/linear2"
@@ -129,8 +128,7 @@
         android:id="@+id/comment_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="0" />
+        android:layout_marginStart="8dp" />
 </LinearLayout>
     </LinearLayout>
 

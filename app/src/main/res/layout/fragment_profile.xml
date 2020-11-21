@@ -73,8 +73,9 @@
                 android:id="@+id/following_number"
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
-                android:text="0"
                 android:clickable="false"
+                android:textSize="18sp"
+
                 android:textColor="@color/black"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:background="@drawable/follow_number_shape" />
@@ -97,7 +98,7 @@
                     android:id="@+id/followers_number"
                     android:layout_width="20dp"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:textSize="18sp"
                     android:clickable="false"
                     android:textColor="@color/black"
                     android:textAppearance="?android:textAppearanceSmall"
