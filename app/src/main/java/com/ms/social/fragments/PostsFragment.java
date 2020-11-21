@@ -71,6 +71,7 @@ public class PostsFragment extends Fragment {
 
                     }
                 }
+                
                 adapter = new PostAdapter(getContext(), posts);
                 recyclerView.setItemViewCacheSize(posts.size());
                 recyclerView.setAdapter(adapter);

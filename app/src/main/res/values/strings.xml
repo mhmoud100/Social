@@ -58,5 +58,6 @@
     <string name="follow">Follow</string>
     <string name="write_your_comment_here">Write Your Comment Here...</string>
     <string name="comment">Comment</string>
+    <string name="log_out">Log out</string>
 
 </resources>

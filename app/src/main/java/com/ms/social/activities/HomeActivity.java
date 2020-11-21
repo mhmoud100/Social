@@ -197,7 +197,7 @@ public class HomeActivity extends AppCompatActivity implements ClickAddPostInter
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.verify_options_menu, menu);
+        getMenuInflater().inflate(R.menu.home_options_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
