@@ -129,7 +129,6 @@ public class SignUpActivity extends AppCompatActivity {
         if (requestCode == CHOOSE_IMAGE_INTENT_REQUEST_CODE && resultCode == RESULT_OK && intent != null){
 
             profilePicUri = intent.getData();
-            Log.i("tag", profilePicUri.toString());
             profilePictureImageView.setImageURI(profilePicUri);
 
         }

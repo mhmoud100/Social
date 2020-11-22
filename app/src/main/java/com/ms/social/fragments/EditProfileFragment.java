@@ -1,11 +1,18 @@
 package com.ms.social.fragments;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +23,8 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,11 +33,22 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.ms.social.R;
 import com.ms.social.help.Helper;
+import com.ms.social.interfaces.ClickGotoProfileInterface;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.xml.transform.Result;
+
+import static android.app.Activity.RESULT_OK;
+import static com.ms.social.help.Helper.COLLECTION_POSTS;
 import static com.ms.social.help.Helper.COLLECTION_USERS;
+import static com.ms.social.help.Helper.POST_PICTURE;
+import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
 
 
 public class EditProfileFragment extends Fragment {
@@ -39,9 +59,17 @@ public class EditProfileFragment extends Fragment {
     RadioButton Male, Female;
     Button Save;
     FirebaseFirestore db;
-    FirebaseStorage storage;
     StorageReference ref;
+    Uri ProfilPicUri = null;
     FirebaseUser user;
+    ClickGotoProfileInterface clickGotoProfileInterface;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        clickGotoProfileInterface = (ClickGotoProfileInterface) context;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,7 +88,22 @@ public class EditProfileFragment extends Fragment {
         Save = view.findViewById(R.id.button_save);
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        Picasso.with(getContext()).load(user.getPhotoUrl()).fit().centerCrop().into(profile_pic);
+        ref = FirebaseStorage.getInstance().getReference();
+        if (user.getPhotoUrl() != null){
+            Picasso.with(getContext()).load(user.getPhotoUrl()).fit().centerCrop().into(profile_pic);
+        } else {
+            profile_pic.setImageResource(R.drawable.ic_account_circle);
+        }
+        profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/jpeg", "image/png"});
+                startActivityForResult(intent, 1);
+
+            }
+        });
         Name.setText(user.getDisplayName());
         Email.setText(user.getEmail());
         String arr[] = getResources().getStringArray(R.array.months);
@@ -86,6 +129,40 @@ public class EditProfileFragment extends Fragment {
         Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (ProfilPicUri != null){
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), ProfilPicUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 20, byteArrayOutputStream);
+                    byte[] bytes = byteArrayOutputStream.toByteArray();
+                    ref.child(COLLECTION_USERS).child(user.getUid()).child(USER_PROFILE_PICTURE).putBytes(bytes)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            ref.child(COLLECTION_USERS).child(user.getUid()).child(USER_PROFILE_PICTURE).getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    ProfilPicUri = uri;
+                                    UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
+                                            .setPhotoUri(ProfilPicUri).build();
+                                    user.updateProfile(req);
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+
+                }
+
                 UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
                         .setDisplayName(Name.getText().toString().trim()).build();
                 user.updateProfile(req);
@@ -96,11 +173,17 @@ public class EditProfileFragment extends Fragment {
                                             "yearOfBirth",Years.getSelectedItem().toString(),
                                             "password",Password.getText().toString(),
                                             "username",Name.getText().toString());
-                if(!(Email.getText().toString().trim()).equals(user.getEmail())) {
-                    user.updateEmail(Email.getText().toString().trim());
-                    user.sendEmailVerification();
+                if(!(Email.getText().toString().trim()).equals(user.getEmail()) && !Patterns.EMAIL_ADDRESS.matcher(Email.getText().toString().trim()).matches()) {
+                    user.updateEmail(Email.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            user.sendEmailVerification();
+                        }
+                    });
+
                 }
                 user.updatePassword(Password.getText().toString());
+                clickGotoProfileInterface.onClickGotoProfile();
             }
         });
         return view;
@@ -114,5 +197,15 @@ public class EditProfileFragment extends Fragment {
             }
         }
         return result;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null){
+            ProfilPicUri = data.getData();
+            System.out.println("\n \n \n i am here \n \n \n");
+            profile_pic.setImageURI(ProfilPicUri);
+        }
     }
 }

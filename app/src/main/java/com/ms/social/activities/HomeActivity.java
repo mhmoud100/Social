@@ -46,12 +46,14 @@ import com.ms.social.fragments.SavedPostesFragment;
 import com.ms.social.interfaces.ClickGotoEditInterface;
 import com.ms.social.interfaces.ClickGotoFollowersInterface;
 import com.ms.social.interfaces.ClickGotoFollowingInterface;
+import com.ms.social.interfaces.ClickGotoProfileInterface;
 import com.squareup.picasso.Picasso;
 
 import static com.ms.social.help.Helper.COLLECTION_USERS;
 import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
 
-public class HomeActivity extends AppCompatActivity implements ClickAddPostInterface, ClickGotoFollowingInterface, ClickGotoFollowersInterface, ClickGotoEditInterface {
+public class HomeActivity extends AppCompatActivity implements ClickAddPostInterface,
+        ClickGotoFollowingInterface, ClickGotoFollowersInterface, ClickGotoEditInterface, ClickGotoProfileInterface {
 
     FirebaseFirestore db;
 
@@ -223,5 +225,13 @@ public class HomeActivity extends AppCompatActivity implements ClickAddPostInter
         setFragment(new FollowingFragment(), "Following");
         navigationView.getMenu().getItem(4).setChecked(true);
         bottomNavigationView.getMenu().setGroupCheckable(0, false, true);
+    }
+
+    @Override
+    public void onClickGotoProfile() {
+        setFragment(new ProfileFragment(), "Profile");
+        navigationView.getMenu().getItem(5).setChecked(true);
+        bottomNavigationView.getMenu().setGroupCheckable(0, true, true);
+        bottomNavigationView.getMenu().getItem(3).setChecked(true);
     }
 }

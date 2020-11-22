@@ -273,7 +273,6 @@ public class CreatePostFragment extends Fragment {
             imageBitmap = (Bitmap) extras.get("data");
             PostImage.setVisibility(View.VISIBLE);
             PostImage.setImageBitmap(imageBitmap);
-            System.out.println(imageBitmap);
         }
 
     }

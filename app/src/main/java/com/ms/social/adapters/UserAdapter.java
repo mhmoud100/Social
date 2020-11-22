@@ -84,7 +84,7 @@ public class UserAdapter extends BaseAdapter {
         db.collection(COLLECTION_USERS).document(uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                name.setText(fauth.getCurrentUser().getDisplayName());
+                name.setText((String) documentSnapshot.get("username"));
                 bio.setText((String) documentSnapshot.get("bio"));
             }
         });

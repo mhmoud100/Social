@@ -28,8 +28,8 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginBottom="8dp"
-                android:src="@drawable/ic_account_circle"
-                android:onClick="onClickProfilePicture"/>
+
+                />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="300dp"
