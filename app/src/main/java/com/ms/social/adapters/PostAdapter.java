@@ -127,8 +127,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
-
+                        holder.progressBar.setVisibility(View.GONE);
+                        holder.postImage.setVisibility(View.GONE);
                     }
                 });
 
@@ -236,15 +236,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             for (int i = 0; i < item.getComments().size(); i++) {
                                 if (item.getComments().get(i).getUserId().equals(user.getUid())){
                                     holder.commentImage.setImageResource(R.drawable.ic_commented);
-                                    holder.commentText.setText(String.valueOf(item.getComments().size()));
+
                                     holder.commentText.setTextColor(ContextCompat.getColor(context, R.color.green));
-                                } else {
-                                    holder.commentText.setText(String.valueOf(item.getComments().size()));
                                 }
                             }
-                        } else {
-                            holder.commentText.setText(String.valueOf(item.getComments().size()));
                         }
+        holder.commentText.setText(String.valueOf(item.getComments().size()));
 
 
 
