@@ -27,6 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -51,10 +52,9 @@ import static com.ms.social.help.Helper.COLLECTION_USERS;
 import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
 
 public class HomeActivity extends AppCompatActivity implements ClickAddPostInterface, ClickGotoFollowingInterface, ClickGotoFollowersInterface, ClickGotoEditInterface {
-    FirebaseAuth fauth;
+
     FirebaseFirestore db;
-    FirebaseStorage storage;
-    StorageReference reference;
+
     Toolbar toolbar;
     DrawerLayout drawer;
     NavigationView navigationView;
@@ -66,10 +66,9 @@ public class HomeActivity extends AppCompatActivity implements ClickAddPostInter
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
-        fauth = FirebaseAuth.getInstance();
+
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
-        reference = storage.getReference();
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
@@ -79,41 +78,26 @@ public class HomeActivity extends AppCompatActivity implements ClickAddPostInter
         TextView userName = view.findViewById(R.id.user_name);
         TextView bio = view.findViewById(R.id.bio);
         ImageView profileImage = view.findViewById(R.id.profile_image);
-//        Log.i("tag", user.getPhotoUrl().toString());
-        reference.child(COLLECTION_USERS)
-                .child(user.getUid())
-                .child(USER_PROFILE_PICTURE).getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.with(HomeActivity.this).load(uri).fit().centerInside().into(profileImage);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.i("tag", e.getMessage());
-            }
-        });
+
+        if (user.getPhotoUrl() != null) {
+            Picasso.with(this).load(user.getPhotoUrl()).fit().centerCrop().into(profileImage);
+        } else {
+            profileImage.setImageResource(R.drawable.ic_account_circle);
+        }
         userName.setText(user.getDisplayName());
-        db.collection(COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection(COLLECTION_USERS).document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-
-                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
-
-                        if (documentSnapshot.getId().equals(user.getUid())) {
-                            bio.setText((String) documentSnapshot.get("bio"));
-                        }
-
-                    }
-
-
-                } else {
-                    Log.i("tag", task.getException().getMessage());
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if ( task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    bio.setText((String) doc.get("bio"));
+                }else {
+                    Log.i("tag", "Failed", task.getException());
                 }
             }
         });
+
+
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -206,7 +190,7 @@ public class HomeActivity extends AppCompatActivity implements ClickAddPostInter
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logout :
-                fauth.signOut();
+                FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 HomeActivity.this.finishAffinity();
         }

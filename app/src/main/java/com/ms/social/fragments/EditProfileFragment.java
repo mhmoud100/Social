@@ -89,7 +89,8 @@ public class EditProfileFragment extends Fragment {
                 UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
                         .setDisplayName(Name.getText().toString().trim()).build();
                 user.updateProfile(req);
-                db.collection(COLLECTION_USERS).document(user.getUid()).update("bio",Bio.getText().toString().trim(),
+                db.collection(COLLECTION_USERS).document(user.getUid()).update(
+                                        "bio",Bio.getText().toString().trim(),
                         "dayOfBirth",Days.getSelectedItem().toString(),
                                             "monthOfBirth",Months.getSelectedItem().toString(),
                                             "yearOfBirth",Years.getSelectedItem().toString(),

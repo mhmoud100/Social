@@ -92,7 +92,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         final Post item = postitem.get(position);
         holder.postText.setText(item.getText());
         holder.date.setText(item.getDate());
-        holder.userName.setText(item.getUserName());
+        holder.userName.setText(user.getDisplayName());
         if (item.getUserId().equals(user.getUid())) {
             holder.follow.setVisibility(View.GONE);
         }

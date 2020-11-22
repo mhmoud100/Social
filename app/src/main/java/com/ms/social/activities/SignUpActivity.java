@@ -144,7 +144,6 @@ public class SignUpActivity extends AppCompatActivity {
         final String fullName = fullNameEditText.getText().toString().trim();
         final String email = emailEditText.getText().toString().trim();
         final String password = passwordEditText.getText().toString().trim();
-
         final String day = daysSpinner.getSelectedItem().toString();
         final String month = monthsSpinner.getSelectedItem().toString();
         final String year = yearsSpinner.getSelectedItem().toString();
@@ -183,9 +182,8 @@ public class SignUpActivity extends AppCompatActivity {
                             currentUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    List<String> followingList = new ArrayList<>();
-                                    List<String> followersList = new ArrayList<>();
-                                    User user = new User(password, day, month, year, finalGender, "", fullName, followersList, followingList);
+
+                                    User user = new User(password, day, month, year, finalGender, "", fullName, new ArrayList<>(), new ArrayList<>());
                                     FirebaseFirestore.getInstance().collection("Users")
                                             .document(currentUser.getUid()).set(user)
                                             .addOnCompleteListener(new OnCompleteListener<Void>() {

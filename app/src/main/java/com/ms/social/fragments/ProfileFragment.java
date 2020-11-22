@@ -57,8 +57,7 @@ Button EditProfile, Followers, Following;
 RecyclerView recyclerView;
 FirebaseAuth fauth;
 FirebaseFirestore db;
-FirebaseStorage storage;
-StorageReference ref;
+
 ArrayList<Post> posts;
 PostAdapter adapter;
 ClickGotoEditInterface clickGotoEditInterface;
@@ -99,8 +98,7 @@ ClickGotoFollowingInterface clickGotoFollowingInterface;
         recyclerView.addItemDecoration(itemDecor);
         fauth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
-        ref = storage.getReference();
+
         display();
 
 
@@ -110,7 +108,7 @@ ClickGotoFollowingInterface clickGotoFollowingInterface;
                 if (task.isSuccessful()){
                     DocumentSnapshot document = task.getResult();
                     User user = document.toObject(User.class);
-                    profileName.setText(user.getUsername());
+                    profileName.setText(fauth.getCurrentUser().getDisplayName());
                     profileBio.setText(user.getBio());
                     followersNumber.setText(String.valueOf(user.getFollowers().size()));
                     followingNumber.setText(String.valueOf(user.getFollowing().size()));
@@ -121,21 +119,11 @@ ClickGotoFollowingInterface clickGotoFollowingInterface;
                 }
             }
         });
-
-        ref.child(COLLECTION_USERS)
-                .child(fauth.getCurrentUser().getUid())
-                .child(USER_PROFILE_PICTURE).getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.with(getContext()).load(uri).fit().centerCrop().into(profileImage);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                profileImage.setImageResource(R.drawable.ic_account_circle);
-            }
-        });
+        if (fauth.getCurrentUser().getPhotoUrl() != null) {
+            Picasso.with(getContext()).load(fauth.getCurrentUser().getPhotoUrl()).fit().centerCrop().into(profileImage);
+        } else {
+            profileImage.setImageResource(R.drawable.ic_account_circle);
+        }
 
 
         EditProfile.setOnClickListener(new View.OnClickListener() {
