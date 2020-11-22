@@ -71,9 +71,5 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        CommentActivity.this.finish();
-    }
+
 }
