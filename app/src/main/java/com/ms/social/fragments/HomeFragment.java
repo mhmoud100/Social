@@ -2,6 +2,7 @@ package com.ms.social.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -13,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -73,39 +76,30 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void display(){
+    private void display() {
 
         db.collection(COLLECTION_POSTS)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException e) {
-                        posts = new ArrayList<>();
-                        id = new ArrayList<>();
-                        if (e != null) {
-                            Log.i("tag", "Listen failed.", e);
-                            return;
-                        }
-                        if (value != null) {
-                            for (QueryDocumentSnapshot doc : value) {
-                                if (followinglist.contains(doc.get("userId"))){
-                                    Post post = doc.toObject(Post.class);
-                                    id.add(0, doc.getId());
-                                    posts.add(0, post);
-                                }else if(doc.get("userId").equals(fauth.getCurrentUser().getUid())){
-                                    Post post = doc.toObject(Post.class);
-                                    id.add(0, doc.getId());
-                                    posts.add(0, post);
-
-                                }
-                            }
-                        }
-                        adapter = new PostAdapter(getContext(), posts);
-                        recyclerView.setItemViewCacheSize(posts.size());
-                        recyclerView.setAdapter(adapter);
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                posts = new ArrayList<>();
+                id = new ArrayList<>();
+                for (DocumentSnapshot doc : task.getResult()) {
+                    if (followinglist.contains(doc.get("userId"))) {
+                        Post post = doc.toObject(Post.class);
+                        id.add(0, doc.getId());
+                        posts.add(0, post);
+                    } else if (doc.get("userId").equals(fauth.getCurrentUser().getUid())) {
+                        Post post = doc.toObject(Post.class);
+                        id.add(0, doc.getId());
+                        posts.add(0, post);
 
                     }
-                });
-
+                }
+                adapter = new PostAdapter(getContext(), posts);
+                recyclerView.setItemViewCacheSize(posts.size());
+                recyclerView.setAdapter(adapter);
+            }
+        });
     }
 }

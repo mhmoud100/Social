@@ -163,29 +163,24 @@ ClickGotoFollowingInterface clickGotoFollowingInterface;
         return view;
     }
     public void display(){
-        db.collection(COLLECTION_POSTS).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection(COLLECTION_POSTS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 posts = new ArrayList<>();
                 id = new ArrayList<>();
-                if (error != null){
-                    Log.i("tag", "Fail", error);
-                    return;
-                }
-
-                for (QueryDocumentSnapshot documentSnapshot : value){
+                for (DocumentSnapshot documentSnapshot : task.getResult()){
                     Post post = documentSnapshot.toObject(Post.class);
                     if(post.getUserId().equals(fauth.getCurrentUser().getUid())){
                         id.add(0,documentSnapshot.getId());
-
                         posts.add(0,post);
                     }
                 }
                 adapter = new PostAdapter(getContext(), posts);
                 recyclerView.setItemViewCacheSize(posts.size());
                 recyclerView.setAdapter(adapter);
-
             }
         });
     }
 }
+//
+//

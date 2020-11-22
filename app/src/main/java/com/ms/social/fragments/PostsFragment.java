@@ -2,6 +2,7 @@ package com.ms.social.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -13,6 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -55,27 +59,19 @@ public class PostsFragment extends Fragment {
     private void display(){
 
 
-        db.collection(COLLECTION_POSTS).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection(COLLECTION_POSTS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                posts = new ArrayList<>();
-                id = new ArrayList<>();
-                if (error != null){
-                    Log.i("tag", "Fail", error);
-                }
-                if (value != null) {
-                    for (QueryDocumentSnapshot documentSnapshot : value){
-                        Post post = documentSnapshot.toObject(Post.class);
-                            id.add(0,documentSnapshot.getId());
-                            posts.add(0,post);
-
-                    }
-                }
-                
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+               posts = new ArrayList<>();
+               id = new ArrayList<>();
+               for (DocumentSnapshot documentSnapshot : task.getResult()){
+                   Post post = documentSnapshot.toObject(Post.class);
+                   id.add(0,documentSnapshot.getId());
+                   posts.add(0,post);
+               }
                 adapter = new PostAdapter(getContext(), posts);
                 recyclerView.setItemViewCacheSize(posts.size());
                 recyclerView.setAdapter(adapter);
-
             }
         });
 
