@@ -16,8 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -51,6 +53,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private ArrayList<Post> postitem;
     private Context context;
     FirebaseUser user;
+    User ThatUser;
     FirebaseFirestore db;
     FirebaseStorage storage;
     StorageReference reference;
@@ -124,129 +127,129 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        if (holder.postImage.getDrawable() == null) {
-                            if (b) {
-                                try {
-                                    sleep(5000);
-                                    notifyDataSetChanged();
-                                    b = false;
-                                } catch (InterruptedException interruptedException) {
-                                    interruptedException.printStackTrace();
-                                }
 
-                            } else {
-                                holder.progressBar.setVisibility(View.GONE);
-                                holder.postImage.setVisibility(View.GONE);
-                            }
-                        }
+
                     }
                 });
 
 
 
-            db.collection(COLLECTION_USERS).document(user.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            db.collection(COLLECTION_USERS).document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if (error != null){
-                        Log.i("tag",error.getMessage());
-                        return;
-                    }
-                    DocumentSnapshot documentSnapshot = value;
-                    User Follow = documentSnapshot.toObject(User.class);
-                    List<String> list = Follow.getFollowing();
-                    if (list.isEmpty()){
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    ThatUser = documentSnapshot.toObject(User.class);
+
+                    if (ThatUser.getFollowing().contains(item.getUserId())){
+                        holder.follow.setText("Following");
+                        holder.follow.setTextColor(ContextCompat.getColor(context, R.color.black));
+                        holder.follow.setBackgroundResource(R.drawable.off_white_selector);
+                    }else {
                         holder.follow.setText("Follow");
-                    } else {
-                        for (int i = 0; i < list.size(); i++){
-                            if (list.get(i).equals(item.getUserId())){
-                                holder.follow.setText("Following");
-                                holder.follow.setTextColor(ContextCompat.getColor(context, R.color.black));
-                                holder.follow.setBackgroundResource(R.drawable.off_white_selector);
-                            }
-                        }
+                        holder.follow.setTextColor(ContextCompat.getColor(context, R.color.white));
+                        holder.follow.setBackgroundResource(R.drawable.green_selector);
                     }
                 }
             });
+
 
             holder.follow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    db.collection(COLLECTION_USERS).document(user.getUid()).update("following", FieldValue.arrayUnion(item.getUserId()))
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    db.collection(COLLECTION_USERS).document(item.getUserId()).update("followers", FieldValue.arrayUnion(user.getUid()))
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    holder.follow.setText("Following");
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
+                    if (ThatUser.getFollowing().contains(item.getUserId())){
+                        db.collection(COLLECTION_USERS).document(user.getUid()).update("following", FieldValue.arrayRemove(item.getUserId()))
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        db.collection(COLLECTION_USERS).document(item.getUserId()).update("followers", FieldValue.arrayRemove(user.getUid()))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
 
-                                        }
-                                    });
-                                    holder.follow.setText("Following");
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
+                                                        notifyDataSetChanged();
 
-                        }
-                    });
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
+                                        });
+//
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+                    }else {
+                        db.collection(COLLECTION_USERS).document(user.getUid()).update("following", FieldValue.arrayUnion(item.getUserId()))
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        db.collection(COLLECTION_USERS).document(item.getUserId()).update("followers", FieldValue.arrayUnion(user.getUid()))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        holder.follow.setText("Following");
+                                                        notifyDataSetChanged();
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
+                                        });
+                                        holder.follow.setText("Following");
+                                        notifyDataSetChanged();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
 
 
-
+                    }
                 }
             });
-        db.collection(COLLECTION_POSTS).document(id.get(position)).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Post post = documentSnapshot.toObject(Post.class);
-                        if (post.getSaved_by().contains(user.getUid())){
-                            holder.save_post.setImageResource(R.drawable.ic_saved);
-                        }
-                    }
-                });
-        db.collection(COLLECTION_POSTS).document(id.get(position)).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Post post = documentSnapshot.toObject(Post.class);
-                        if (post.getLiked_by().contains(user.getUid())){
+
+            if (item.getSaved_by().contains(user.getUid())){
+                holder.save_post.setImageResource(R.drawable.ic_saved);
+            }
+
+
+
+                        if (item.getLiked_by().contains(user.getUid())){
                             holder.favoriteImage.setImageResource(R.drawable.ic_liked);
-                            holder.favoriteText.setText(String.valueOf(post.getLiked_by().size()));
+                            holder.favoriteText.setText(String.valueOf(item.getLiked_by().size()));
                             holder.favoriteText.setTextColor(ContextCompat.getColor(context, R.color.green));
                         } else {
-                            holder.favoriteText.setText(String.valueOf(post.getLiked_by().size()));
+                            holder.favoriteText.setText(String.valueOf(item.getLiked_by().size()));
                         }
-                    }
-                });
-         db.collection(COLLECTION_POSTS).document(id.get(position)).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Post post = documentSnapshot.toObject(Post.class);
-                        if (post.getComments().size() != 0) {
-                            for (int i = 0; i < post.getComments().size(); i++) {
-                                if (post.getComments().get(i).getUserId().equals(user.getUid())){
+
+
+
+                        if (item.getComments().size() != 0) {
+                            for (int i = 0; i < item.getComments().size(); i++) {
+                                if (item.getComments().get(i).getUserId().equals(user.getUid())){
                                     holder.commentImage.setImageResource(R.drawable.ic_commented);
-                                    holder.commentText.setText(String.valueOf(post.getComments().size()));
+                                    holder.commentText.setText(String.valueOf(item.getComments().size()));
                                     holder.commentText.setTextColor(ContextCompat.getColor(context, R.color.green));
                                 } else {
-                                    holder.commentText.setText(String.valueOf(post.getComments().size()));
+                                    holder.commentText.setText(String.valueOf(item.getComments().size()));
                                 }
                             }
                         } else {
-                            holder.commentText.setText(String.valueOf(post.getComments().size()));
+                            holder.commentText.setText(String.valueOf(item.getComments().size()));
                         }
 
 
-                        }
 
-                });
+
+
             holder.favoriteImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -265,6 +268,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                                 holder.favoriteImage.setImageResource(R.drawable.ic_favorite);
                                                 holder.favoriteText.setText(String.valueOf(post.getLiked_by().size()));
                                                 holder.favoriteText.setTextColor(ContextCompat.getColor(context, R.color.black));
+                                                item.getLiked_by().remove(user.getUid());
+                                                notifyDataSetChanged();
                                             }
                                         });
                                     } else {
@@ -273,7 +278,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-
+                                                        item.getLiked_by().add(user.getUid());
+                                                        notifyDataSetChanged();
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -302,7 +308,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        holder.favoriteImage.setImageResource(R.drawable.ic_bookmark);
+                                                        holder.save_post.setImageResource(R.drawable.ic_bookmark);
+                                                        item.getSaved_by().remove(user.getUid());
+                                                        notifyDataSetChanged();
+
                                                     }
                                                 });
                                     } else {
@@ -311,7 +320,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-
+                                                        item.getSaved_by().add(user.getUid());
+                                                        notifyDataSetChanged();
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
                                             @Override
