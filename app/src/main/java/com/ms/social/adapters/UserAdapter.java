@@ -42,6 +42,7 @@ public class UserAdapter extends BaseAdapter {
     FirebaseStorage storage;
     StorageReference ref;
     FirebaseAuth fauth;
+    User ThatUser;
 
     public UserAdapter(Context context, List<String> item) {
         this.context = context;
@@ -71,6 +72,7 @@ public class UserAdapter extends BaseAdapter {
         TextView name = convertView.findViewById(R.id.follow_user_name);
         TextView bio = convertView.findViewById(R.id.follow_bio);
         TextView follow = convertView.findViewById(R.id.follow);
+
         String uid = item.get(position);
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
@@ -94,8 +96,8 @@ public class UserAdapter extends BaseAdapter {
                     return;
                 }
                 DocumentSnapshot documentSnapshot = value;
-                User Follow = documentSnapshot.toObject(User.class);
-                List<String> list = Follow.getFollowing();
+                ThatUser = documentSnapshot.toObject(User.class);
+                List<String> list = ThatUser.getFollowing();
 //                System.out.println(list);
                 follow.setText("Follow");
                 follow.setTextColor(ContextCompat.getColor(context, R.color.white));
@@ -116,33 +118,63 @@ public class UserAdapter extends BaseAdapter {
         follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db.collection(COLLECTION_USERS).document(fauth.getCurrentUser().getUid()).update("following", FieldValue.arrayUnion(item.get(position)))
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                db.collection(COLLECTION_USERS).document(item.get(position)).update("followers", FieldValue.arrayUnion(fauth.getCurrentUser().getUid()))
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                follow.setText("Following");
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
+                if (ThatUser.getFollowing().contains(uid)){
+                    db.collection(COLLECTION_USERS).document(fauth.getCurrentUser().getUid()).update("following", FieldValue.arrayRemove(uid))
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    db.collection(COLLECTION_USERS).document(uid).update("followers", FieldValue.arrayRemove(fauth.getCurrentUser().getUid()))
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
 
-                                    }
-                                });
-                                follow.setText("Following");
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+//                                                    notifyDataSetChanged();
 
-                    }
-                });
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+
+                                        }
+                                    });
+//
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+                }else {
+                    db.collection(COLLECTION_USERS).document(fauth.getCurrentUser().getUid()).update("following", FieldValue.arrayUnion(uid))
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    db.collection(COLLECTION_USERS).document(uid).update("followers", FieldValue.arrayUnion(fauth.getCurrentUser().getUid()))
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+//                                                    follow.setText("Following");
+//                                                    notifyDataSetChanged();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+
+                                        }
+                                    });
+//                                    follow.setText("Following");
+//                                    notifyDataSetChanged();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
 
 
-
+                }
             }
         });
 

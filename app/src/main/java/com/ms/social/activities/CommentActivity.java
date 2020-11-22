@@ -63,6 +63,7 @@ public class CommentActivity extends AppCompatActivity {
                 if (!commentText.getText().toString().trim().equals("")) {
                     Comment data = new Comment(auth.getCurrentUser().getUid(), commentText.getText().toString());
                     db.collection(COLLECTION_POSTS).document(id.get(position)).update("comments", FieldValue.arrayUnion(data));
+                    commentText.setText("");
                 }
             }
         });
