@@ -192,8 +192,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        holder.follow.setText("Following");
+
                                                         notifyDataSetChanged();
+
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -201,8 +202,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
                                             }
                                         });
-                                        holder.follow.setText("Following");
-                                        notifyDataSetChanged();
+//
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
