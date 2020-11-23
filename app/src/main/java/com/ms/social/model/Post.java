@@ -3,15 +3,14 @@ package com.ms.social.model;
 import java.util.List;
 
 public class Post {
-    String UserId, UserName, Text, Date;
+    String UserId, Text, Date;
     List<String> Saved_by, Liked_by;
     List<Comment> Comments;
 
     public Post() {}
 
-    public Post(String userId, String userName, String text, String date, List<String> saved_by, List<String> liked_by, List<Comment> comments) {
+    public Post(String userId, String text, String date, List<String> saved_by, List<String> liked_by, List<Comment> comments) {
         UserId = userId;
-        UserName = userName;
         Text = text;
         Date = date;
         Saved_by = saved_by;
@@ -49,14 +48,6 @@ public class Post {
 
     public void setUserId(String userId) {
         UserId = userId;
-    }
-
-    public String getUserName() {
-        return UserName;
-    }
-
-    public void setUserName(String userName) {
-        UserName = userName;
     }
 
     public String getText() {

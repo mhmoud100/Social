@@ -117,7 +117,6 @@ public class CreatePostFragment extends Fragment {
                 String currentDateAndTime = df.format(new Date());
 
                 Post post = new Post(fauth.getCurrentUser().getUid(),
-                        fauth.getCurrentUser().getDisplayName(),
                         AddPost.getText().toString(),
                         currentDateAndTime,new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
                 if (profilePicUri != null) {

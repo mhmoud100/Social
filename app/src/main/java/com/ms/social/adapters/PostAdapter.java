@@ -92,10 +92,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         final Post item = postitem.get(position);
         holder.postText.setText(item.getText());
         holder.date.setText(item.getDate());
-        holder.userName.setText(item.getUserName());
+
         if (item.getUserId().equals(user.getUid())) {
             holder.follow.setVisibility(View.GONE);
         }
+
+        db.collection(COLLECTION_USERS).document(item.getUserId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                holder.userName.setText((String) task.getResult().get("username"));
+            }
+        });
 
         reference.child(COLLECTION_USERS)
                 .child(item.getUserId())

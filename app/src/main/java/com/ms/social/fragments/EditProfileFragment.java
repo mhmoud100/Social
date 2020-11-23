@@ -63,6 +63,7 @@ public class EditProfileFragment extends Fragment {
     Uri ProfilPicUri = null;
     FirebaseUser user;
     ClickGotoProfileInterface clickGotoProfileInterface;
+    String FinalGender = null;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -119,7 +120,7 @@ public class EditProfileFragment extends Fragment {
                         String arr1[] = getResources().getStringArray(R.array.years);
                         Months.setSelection(indexOf(arr, (String)res.get("monthOfBirth")));
                         Years.setSelection(indexOf(arr1, (String)res.get("yearOfBirth")));
-                        if("Male".equals((String) res.get("gender"))){
+                        if("Male".equals(res.get("gender"))){
                             Male.setChecked(true);
                         }else{
                             Female.setChecked(true);
@@ -162,17 +163,20 @@ public class EditProfileFragment extends Fragment {
                     });
 
                 }
-
+                if (Male.isChecked()) FinalGender = getString(R.string.male);
+                else if (Female.isChecked()) FinalGender = getString(R.string.female);
                 UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
                         .setDisplayName(Name.getText().toString().trim()).build();
                 user.updateProfile(req);
-                db.collection(COLLECTION_USERS).document(user.getUid()).update(
-                                        "bio",Bio.getText().toString().trim(),
-                        "dayOfBirth",Days.getSelectedItem().toString(),
-                                            "monthOfBirth",Months.getSelectedItem().toString(),
-                                            "yearOfBirth",Years.getSelectedItem().toString(),
-                                            "password",Password.getText().toString(),
-                                            "username",Name.getText().toString());
+                db.collection(COLLECTION_USERS).document(user.getUid())
+                        .update(
+                    "bio",Bio.getText().toString().trim(),
+    "dayOfBirth",Days.getSelectedItem().toString(),
+                        "monthOfBirth",Months.getSelectedItem().toString(),
+                        "yearOfBirth",Years.getSelectedItem().toString(),
+                        "password",Password.getText().toString(),
+                        "username",Name.getText().toString(),
+                        "gender", FinalGender );
                 if(!(Email.getText().toString().trim()).equals(user.getEmail()) && !Patterns.EMAIL_ADDRESS.matcher(Email.getText().toString().trim()).matches()) {
                     user.updateEmail(Email.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -182,7 +186,12 @@ public class EditProfileFragment extends Fragment {
                     });
 
                 }
-                user.updatePassword(Password.getText().toString());
+                user.updatePassword(Password.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.i("tag", "Updated");
+                    }
+                });
                 clickGotoProfileInterface.onClickGotoProfile();
             }
         });
@@ -204,7 +213,6 @@ public class EditProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK && data != null){
             ProfilPicUri = data.getData();
-            System.out.println("\n \n \n i am here \n \n \n");
             profile_pic.setImageURI(ProfilPicUri);
         }
     }
