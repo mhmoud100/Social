@@ -41,10 +41,10 @@ public class CommentActivity extends AppCompatActivity {
         listView  = findViewById(R.id.comments);
         comment = findViewById(R.id.comment);
         commentText = findViewById(R.id.comment_text);
-        int position = getIntent().getIntExtra("position", 0);
+        String id = getIntent().getStringExtra("id");
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
-        db.collection(COLLECTION_POSTS).document(id.get(position)).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        db.collection(COLLECTION_POSTS).document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null){
@@ -62,7 +62,7 @@ public class CommentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!commentText.getText().toString().trim().equals("")) {
                     Comment data = new Comment(auth.getCurrentUser().getUid(), commentText.getText().toString());
-                    db.collection(COLLECTION_POSTS).document(id.get(position)).update("comments", FieldValue.arrayUnion(data));
+                    db.collection(COLLECTION_POSTS).document(id).update("comments", FieldValue.arrayUnion(data));
                     commentText.setText("");
                 }
             }

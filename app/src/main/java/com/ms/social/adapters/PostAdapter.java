@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,31 +23,30 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
+
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ms.social.R;
 import com.ms.social.activities.CommentActivity;
-import com.ms.social.help.Helper;
+
 import com.ms.social.model.Post;
 import com.ms.social.model.User;
 import com.squareup.picasso.Picasso;
 
 
-import org.w3c.dom.Comment;
+
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import static com.ms.social.help.Helper.COLLECTION_POSTS;
 import static com.ms.social.help.Helper.COLLECTION_USERS;
 import static com.ms.social.help.Helper.POST_PICTURE;
 import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
-import static com.ms.social.help.Helper.id;
-import static java.lang.Thread.sleep;
+
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private ArrayList<Post> postitem;
@@ -122,7 +121,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
                 reference.child(COLLECTION_POSTS)
                         .child(item.getUserId())
-                        .child(id.get(position))
+                        .child(item.getId())
                         .child(POST_PICTURE).getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -258,13 +257,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
 
-                    db.collection(COLLECTION_POSTS).document(id.get(position)).get()
+                    db.collection(COLLECTION_POSTS).document(item.getId()).get()
                             .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     Post post = documentSnapshot.toObject(Post.class);
                                     if (post.getLiked_by().contains(user.getUid())){
-                                        db.collection(COLLECTION_POSTS).document(id.get(position))
+                                        db.collection(COLLECTION_POSTS).document(item.getId())
                                                 .update("liked_by", FieldValue.arrayRemove(user.getUid()))
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
@@ -277,7 +276,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                             }
                                         });
                                     } else {
-                                        db.collection(COLLECTION_POSTS).document(id.get(position))
+                                        db.collection(COLLECTION_POSTS).document(item.getId())
                                                 .update("liked_by", FieldValue.arrayUnion(user.getUid()))
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
@@ -301,13 +300,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             holder.save_post.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    db.collection(COLLECTION_POSTS).document(id.get(position)).get()
+                    db.collection(COLLECTION_POSTS).document(item.getId()).get()
                             .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     Post post = documentSnapshot.toObject(Post.class);
                                     if (post.getSaved_by().contains(user.getUid())){
-                                        db.collection(COLLECTION_POSTS).document(id.get(position))
+                                        db.collection(COLLECTION_POSTS).document(item.getId())
                                                 .update("saved_by", FieldValue.arrayRemove(user.getUid()))
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
@@ -319,7 +318,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                                     }
                                                 });
                                     } else {
-                                        db.collection(COLLECTION_POSTS).document(id.get(position))
+                                        db.collection(COLLECTION_POSTS).document(item.getId())
                                                 .update("saved_by", FieldValue.arrayUnion(user.getUid()))
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
@@ -343,7 +342,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             public void onClick(View v) {
 
                 Intent intent = new Intent(context, CommentActivity.class);
-                intent.putExtra("position", position);
+                intent.putExtra("id", item.getId());
                 context.startActivity(intent);
             }
         });

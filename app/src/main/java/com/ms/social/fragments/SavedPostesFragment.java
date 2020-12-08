@@ -13,15 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ms.social.R;
 import com.ms.social.adapters.PostAdapter;
@@ -30,7 +29,7 @@ import com.ms.social.model.Post;
 import java.util.ArrayList;
 
 import static com.ms.social.help.Helper.COLLECTION_POSTS;
-import static com.ms.social.help.Helper.id;
+
 
 public class SavedPostesFragment extends Fragment {
     RecyclerView recyclerView;
@@ -63,18 +62,21 @@ public class SavedPostesFragment extends Fragment {
         db.collection(COLLECTION_POSTS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                posts = new ArrayList<>();
-                id = new ArrayList<>();
-                for (DocumentSnapshot documentSnapshot : task.getResult()){
-                    Post post = documentSnapshot.toObject(Post.class);
-                    if(post.getSaved_by().contains(fauth.getCurrentUser().getUid())){
-                        id.add(0,documentSnapshot.getId());
-                        posts.add(0,post);
+                if(task.isSuccessful() && task.getResult() != null){
+                    posts = new ArrayList<>();
+                    for (DocumentSnapshot documentSnapshot : task.getResult()){
+                        Post post = documentSnapshot.toObject(Post.class);
+                        if(post.getSaved_by().contains(fauth.getCurrentUser().getUid())){
+                            post.setId(documentSnapshot.getId());
+                            posts.add(post);
+                        }
                     }
+                    adapter = new PostAdapter(getContext(), posts);
+                    recyclerView.setItemViewCacheSize(2);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_SHORT).show();
                 }
-                adapter = new PostAdapter(getContext(), posts);
-                recyclerView.setItemViewCacheSize(2);
-                recyclerView.setAdapter(adapter);
             }
         });
 

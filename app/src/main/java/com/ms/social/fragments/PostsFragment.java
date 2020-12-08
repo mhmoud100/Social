@@ -3,34 +3,34 @@ package com.ms.social.fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
+
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ms.social.adapters.PostAdapter;
 import com.ms.social.R;
 import com.ms.social.model.Post;
 
 import java.util.ArrayList;
-import java.util.Objects;
+
 
 import static com.ms.social.help.Helper.COLLECTION_POSTS;
-import static com.ms.social.help.Helper.id;
+
 
 public class PostsFragment extends Fragment {
     RecyclerView recyclerView;
@@ -62,16 +62,19 @@ public class PostsFragment extends Fragment {
         db.collection(COLLECTION_POSTS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-               posts = new ArrayList<>();
-               id = new ArrayList<>();
-               for (DocumentSnapshot documentSnapshot : task.getResult()){
-                   Post post = documentSnapshot.toObject(Post.class);
-                   id.add(0,documentSnapshot.getId());
-                   posts.add(0,post);
+               if(task.isSuccessful() && task.getResult() != null){
+                   posts = new ArrayList<>();
+                   for (DocumentSnapshot documentSnapshot : task.getResult()){
+                       Post post = documentSnapshot.toObject(Post.class);
+                       post.setId(documentSnapshot.getId());
+                       posts.add(post);
+                   }
+                   adapter = new PostAdapter(getContext(), posts);
+                   recyclerView.setItemViewCacheSize(posts.size());
+                   recyclerView.setAdapter(adapter);
+               }else {
+                   Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_SHORT).show();
                }
-                adapter = new PostAdapter(getContext(), posts);
-                recyclerView.setItemViewCacheSize(posts.size());
-                recyclerView.setAdapter(adapter);
             }
         });
 

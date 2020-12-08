@@ -1,12 +1,11 @@
 package com.ms.social.fragments;
 
 import android.content.Context;
-import android.net.Uri;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,23 +18,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
+
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+
 import com.ms.social.adapters.PostAdapter;
 import com.ms.social.R;
-import com.ms.social.help.Helper;
+
 import com.ms.social.interfaces.ClickGotoEditInterface;
 import com.ms.social.interfaces.ClickGotoFollowersInterface;
 import com.ms.social.interfaces.ClickGotoFollowingInterface;
@@ -47,8 +44,7 @@ import java.util.ArrayList;
 
 import static com.ms.social.help.Helper.COLLECTION_POSTS;
 import static com.ms.social.help.Helper.COLLECTION_USERS;
-import static com.ms.social.help.Helper.USER_PROFILE_PICTURE;
-import static com.ms.social.help.Helper.id;
+
 
 public class ProfileFragment extends Fragment {
 ImageView profileImage;
@@ -154,18 +150,21 @@ ClickGotoFollowingInterface clickGotoFollowingInterface;
         db.collection(COLLECTION_POSTS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                posts = new ArrayList<>();
-                id = new ArrayList<>();
-                for (DocumentSnapshot documentSnapshot : task.getResult()){
-                    Post post = documentSnapshot.toObject(Post.class);
-                    if(post.getUserId().equals(fauth.getCurrentUser().getUid())){
-                        id.add(0,documentSnapshot.getId());
-                        posts.add(0,post);
+                if(task.isSuccessful() && task.getResult() != null){
+                    posts = new ArrayList<>();
+                    for (DocumentSnapshot documentSnapshot : task.getResult()){
+                        Post post = documentSnapshot.toObject(Post.class);
+                        if(post.getUserId().equals(fauth.getCurrentUser().getUid())){
+                            post.setId(documentSnapshot.getId());
+                            posts.add(post);
+                        }
                     }
+                    adapter = new PostAdapter(getContext(), posts);
+                    recyclerView.setItemViewCacheSize(posts.size());
+                    recyclerView.setAdapter(adapter);
+                }else{
+                    Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_SHORT).show();
                 }
-                adapter = new PostAdapter(getContext(), posts);
-                recyclerView.setItemViewCacheSize(posts.size());
-                recyclerView.setAdapter(adapter);
             }
         });
     }

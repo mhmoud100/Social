@@ -3,7 +3,7 @@ package com.ms.social.model;
 import java.util.List;
 
 public class Post {
-    String UserId, Text, Date;
+    String UserId, Text, Date, id;
     List<String> Saved_by, Liked_by;
     List<Comment> Comments;
 
@@ -17,6 +17,10 @@ public class Post {
         Liked_by = liked_by;
         Comments = comments;
     }
+
+    public String getId() { return id; }
+
+    public void setId(String id) { this.id = id; }
 
     public List<String> getSaved_by() {
         return Saved_by;
